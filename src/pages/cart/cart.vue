@@ -6,6 +6,6 @@
   <view class="cart">cart</view>
 </template>
 
-<style lang="scss">
+<style lang="ts">
 //
 </style>
