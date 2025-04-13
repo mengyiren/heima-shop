@@ -18,6 +18,8 @@ const httpInterceptor = {
     options.header = {
       ...options.header,
       'source-client': 'miniapp',
+      'Cross-Origin-Opener-Policy': 'same-origin',
+      'Cross-Origin-Embedder-Policy': 'require-corp',
     }
     // 4. 添加 token 请求头标识
     const memberStore = useMemberStore()
