@@ -21,16 +21,44 @@ uni.setNavigationBarTitle({
 
 const activeIndex = ref(0)
 const bannerPicture = ref('')
-const subTypes = ref<SubTypeItem[]>([])
+const subTypes = ref<(SubTypeItem & { finish?: boolean })[]>([])
 const getHotData = async () => {
-  const res = await getHomeRecommendAPI(currHot!.url)
+  const res = await getHomeRecommendAPI(currHot!.url, {
+    page: import.meta.env.DEV ? 30 : 1,
+    pageSize: 10,
+  })
+  //保存封面
   bannerPicture.value = res.result.bannerPicture
+  //保存列表
   subTypes.value = res.result.subTypes
 }
 
 onLoad(() => {
   getHotData()
 })
+
+const onScrolltolower = async () => {
+  const subType = subTypes.value[activeIndex.value]
+  if (subType.goodsItems.page < subType.goodsItems.pages) {
+    //当前页码累加
+    subType.goodsItems.page++
+  } else {
+    subType.finish = true
+    //退出并提示
+    return uni.showToast({
+      title: '没有更多数据了',
+      icon: 'none',
+    })
+  }
+
+  const res = await getHomeRecommendAPI(currHot!.url, {
+    subType: subType.id,
+    page: subType.goodsItems.page,
+    pageSize: subType.goodsItems.pageSize,
+  })
+  const newSubType = res.result.subTypes[activeIndex.value]
+  subType.goodsItems.items.push(...newSubType.goodsItems.items)
+}
 </script>
 
 <template>
@@ -57,6 +85,7 @@ onLoad(() => {
       v-show="activeIndex === index"
       scroll-y
       class="scroll-view"
+      @scrolltolower="onScrolltolower"
     >
       <view class="goods">
         <navigator
@@ -74,7 +103,7 @@ onLoad(() => {
           </view>
         </navigator>
       </view>
-      <view class="loading-text">正在加载...</view>
+      <view class="loading-text">{{ item.finish ? '没有数据了' : '正在加载...' }}</view>
     </scroll-view>
   </view>
 </template>
