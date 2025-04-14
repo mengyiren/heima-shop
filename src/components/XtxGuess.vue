@@ -2,15 +2,41 @@
 import { getHomeGoodsGuessLikeAPI } from '@/services/home'
 import type { GuessItem } from '@/types/home'
 import { onMounted, ref } from 'vue'
+import type { PageParams } from '@/types/global'
 
+//分页参数
+const pageParams: Required<PageParams> = {
+  page: 30,
+  pageSize: 10,
+}
 //猜你喜欢
 const guessList = ref<GuessItem[]>([])
+//结束标记
+const finish = ref(false)
 const getGuessLikeData = async () => {
-  const res = await getHomeGoodsGuessLikeAPI()
-  guessList.value = res.result.items
+  if (finish.value === true) {
+    return uni.showToast({
+      title: '没有更多数据了',
+      icon: 'none',
+    })
+  }
+  const res = await getHomeGoodsGuessLikeAPI(pageParams)
+  //数组追加
+  guessList.value.push(...res.result.items)
+  if (pageParams.page < res.result.pages) {
+    //页码累加
+    pageParams.page++
+  } else {
+    //没有更多数据
+    finish.value = true
+  }
 }
 onMounted(() => {
   getGuessLikeData()
+})
+
+defineExpose({
+  getMore: getGuessLikeData,
 })
 </script>
 
@@ -24,7 +50,7 @@ onMounted(() => {
       class="guess-item"
       v-for="item in guessList"
       :key="item.id"
-      :url="`/pages/goods/goods?id=4007498`"
+      :url="'/pages/goods/goods'"
     >
       <image class="image" mode="aspectFill" :src="item.picture"></image>
       <view class="name"> {{ item.name }} </view>
@@ -34,7 +60,7 @@ onMounted(() => {
       </view>
     </navigator>
   </view>
-  <view class="loading-text"> 正在加载... </view>
+  <view class="loading-text"> {{ finish ? '没有更多数据了' : '正在加载...' }} </view>
 </template>
 
 <style lang="scss">
@@ -94,6 +120,7 @@ onMounted(() => {
     text-overflow: ellipsis;
     display: -webkit-box;
     -webkit-line-clamp: 2;
+    line-clamp: 2;
     -webkit-box-orient: vertical;
   }
   .price {
