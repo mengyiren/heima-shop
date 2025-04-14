@@ -7,6 +7,7 @@ import 'vue'
 import XtxSwiper from '@/components/XtxSwiper.vue'
 declare module 'vue' {
   export interface GlobalComponents {
-    XtxSwiper: typeof XtxSwiper
+    XtxSwiper: typeof XtxSwiperx
+    XtxGuess: typeof XtxGuess
   }
 }
