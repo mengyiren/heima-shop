@@ -96,7 +96,7 @@
 			}
 		]
 	},
-  //分包加载规则
+	//分包加载规则
 	"subPackages": [
 		{
 			"root": "pagesMember",
@@ -106,17 +106,29 @@
 					"style": {
 						"navigationBarTitleText": "设置"
 					}
-				}
+				},
+				{
+					"path": "profile/profile",
+					"style": {
+						"navigationBarTitleText": "个人信息"
+					}
+				},
+        {
+          "path": "address/address",
+          "style": {
+            "navigationBarTitleText": "收货地址"
+          }
+        }
 			]
 		}
 	],
-  //分包预下载
-  "preloadRule": {
-    "pages/my/my": {
-      "network": "all",
-      "packages": [
-        "pagesMember"
-      ]
-    }
-  }
+	//分包预下载
+	"preloadRule": {
+		"pages/my/my": {
+			"network": "all",
+			"packages": [
+				"pagesMember"
+			]
+		}
+	}
 }
