@@ -3,6 +3,7 @@ import { getCategoryTopAPI, getHomeBannerAPI } from '@/services/category'
 import type { BannerItem, CategoryTopItem } from '@/types/category'
 import { onLoad } from '@dcloudio/uni-app'
 import { computed, ref } from 'vue'
+import PageSkeleton from './components/PageSkeleton.vue'
 
 //
 const bannerList = ref<BannerItem[]>([])
@@ -18,11 +19,12 @@ const getCategoryData = async () => {
 }
 
 const activeIndex = ref(0)
+const isFinish = ref(false)
 
 //页面加载
-onLoad(() => {
-  getBannerData()
-  getCategoryData()
+onLoad(async () => {
+  await Promise.all([getBannerData(), getCategoryData()])
+  isFinish.value = true
 })
 
 const subCategoryList = computed(() => {
@@ -31,7 +33,7 @@ const subCategoryList = computed(() => {
 </script>
 
 <template>
-  <view class="viewport">
+  <view class="viewport" v-if="isFinish">
     <!-- 搜索框 -->
     <view class="search">
       <view class="input">
@@ -82,6 +84,7 @@ const subCategoryList = computed(() => {
       </scroll-view>
     </view>
   </view>
+  <PageSkeleton v-else />
 </template>
 
 <style lang="scss">
