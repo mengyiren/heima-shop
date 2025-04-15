@@ -54,11 +54,7 @@ const loginSuccess = (res: LoginResult) => {
       <!-- <button class="button phone">登录</button> -->
 
       <!-- 小程序端授权登录 -->
-      <button
-        class="button phone"
-        open-type="getPhoneNumber"
-        @getphonenumber="onGetphonenumberSimple"
-      >
+      <button class="button phone" open-type="getPhoneNumber" @getphonenumber="onGetphonenumber">
         <text class="icon icon-phone"></text>
         手机号快捷登录
       </button>
