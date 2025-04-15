@@ -25,3 +25,13 @@ export type CategoryChildItem = {
   /** 二级分类图片 */
   picture: string
 }
+
+export type BannerItem = {
+  /** 跳转链接 */
+  hrefUrl: string
+  /** 图片地址 */
+  imgUrl: string
+  type: string
+  /** 图片id */
+  id: string
+}

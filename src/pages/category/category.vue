@@ -1,21 +1,27 @@
 <script setup lang="ts">
-import { getCategoryTopAPI } from '@/services/category'
-import type { CategoryTopItem } from '@/types/category'
+import { getCategoryTopAPI, getHomeBannerAPI } from '@/services/category'
+import type { BannerItem, CategoryTopItem } from '@/types/category'
 import { onLoad } from '@dcloudio/uni-app'
 import { computed, ref } from 'vue'
 
 //
+const bannerList = ref<BannerItem[]>([])
+const getBannerData = async () => {
+  const res = await getHomeBannerAPI()
+  bannerList.value = res.result
+}
+
 const categoryList = ref<CategoryTopItem[]>([])
 const getCategoryData = async () => {
   const res = await getCategoryTopAPI()
   categoryList.value = res.result
-  console.log(res)
 }
 
 const activeIndex = ref(0)
 
 //页面加载
 onLoad(() => {
+  getBannerData()
   getCategoryData()
 })
 
@@ -49,7 +55,7 @@ const subCategoryList = computed(() => {
       <!-- 右侧：二级分类 -->
       <scroll-view class="secondary" scroll-y>
         <!-- 焦点图 -->
-        <XtxSwiper class="banner" :list="[]" />
+        <XtxSwiper class="banner" :list="bannerList" />
         <!-- 内容区域 -->
         <view class="panel" v-for="item in subCategoryList" :key="item.id">
           <view class="title">
