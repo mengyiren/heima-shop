@@ -1,9 +1,29 @@
 // AddressPanel.vue
 <script setup lang="ts">
+import { getMemberAddressAPI } from '@/services/address'
+import type { AddressItem } from '@/types/address'
+import { onMounted, ref } from 'vue'
+
 //
 const emit = defineEmits<{
   (event: 'close'): void
+  (evenet: 'send-address', item: AddressItem): void
 }>()
+
+const addressList = ref<AddressItem[]>([])
+const getAddressData = async () => {
+  const res = await getMemberAddressAPI()
+  addressList.value = res.result
+}
+
+const onAddressSelected = (item: AddressItem) => {
+  emit('send-address', item)
+  emit('close')
+}
+onMounted(() => {
+  // 页面加载完成后，获取地址数据
+  getAddressData()
+})
 </script>
 
 <template>
@@ -14,20 +34,10 @@ const emit = defineEmits<{
     <view class="title">配送至</view>
     <!-- 内容 -->
     <view class="content">
-      <view class="item">
-        <view class="user">李明 13824686868</view>
-        <view class="address">北京市顺义区后沙峪地区安平北街6号院</view>
-        <text class="icon icon-checked"></text>
-      </view>
-      <view class="item">
-        <view class="user">王东 13824686868</view>
-        <view class="address">北京市顺义区后沙峪地区安平北街6号院</view>
-        <text class="icon icon-ring"></text>
-      </view>
-      <view class="item">
-        <view class="user">张三 13824686868</view>
-        <view class="address">北京市朝阳区孙河安平北街6号院</view>
-        <text class="icon icon-ring"></text>
+      <view class="item" v-for="item in addressList" :key="item.id" @tap="onAddressSelected(item)">
+        <view class="user">{{ item.receiver }} {{ item.contact }}</view>
+        <view class="address">{{ item.fullLocation }} {{ item.address }}</view>
+        <text class="checkbox" :class="{ checked: item.isDefault }"></text>
       </view>
     </view>
     <view class="footer">
@@ -73,6 +83,29 @@ const emit = defineEmits<{
     background-position: 0 center;
     background-image: url(https://pcapi-xiaotuxian-front-devtest.itheima.net/miniapp/images/locate.png);
     position: relative;
+    .checkbox {
+      position: absolute;
+      top: 0;
+      right: 0;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 80rpx;
+      height: 100%;
+
+      &::before {
+        content: '\e6cd';
+        font-family: 'erabbit' !important;
+        font-size: 40rpx;
+        color: #444;
+      }
+
+      &.checked::before {
+        content: '\e6cc';
+        color: #27ba9b;
+      }
+    }
   }
   .icon {
     color: #999;
