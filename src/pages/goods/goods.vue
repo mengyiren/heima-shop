@@ -125,8 +125,6 @@ const onAddCart = async (ev: SkuPopupEvent) => {
 }
 
 const onBuyNow = (ev: SkuPopupEvent) => {
-  console.log('立即购买', addrssId.value)
-
   uni.navigateTo({
     url: `/pagesOrder/create/create?skuId=${ev._id}&count=${ev.buy_num}&addressId=${addrssId.value}`,
   })

@@ -32,7 +32,7 @@
 				"navigationBarTitleText": "购物车"
 			}
 		},
-    {
+		{
 			"path": "pages/cart/cart2",
 			"style": {
 				"navigationBarTitleText": "购物车"
@@ -140,6 +140,12 @@
 					"path": "create/create",
 					"style": {
 						"navigationBarTitleText": "订单结算"
+					}
+				},
+        {
+					"path": "detail/detail",
+					"style": {
+						"navigationBarTitleText": "订单详情"
 					}
 				}
 			]
