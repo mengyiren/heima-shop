@@ -32,6 +32,12 @@
 				"navigationBarTitleText": "购物车"
 			}
 		},
+    {
+			"path": "pages/cart/cart2",
+			"style": {
+				"navigationBarTitleText": "购物车"
+			}
+		},
 		{
 			"path": "pages/category/category",
 			"style": {
@@ -119,12 +125,23 @@
 						"navigationBarTitleText": "收货地址"
 					}
 				},
-        {
-          "path": "address-form/address-form",
-          "style": {
-            "navigationBarTitleText": "地址表单页"
-          }
-        }
+				{
+					"path": "address-form/address-form",
+					"style": {
+						"navigationBarTitleText": "地址表单页"
+					}
+				}
+			]
+		},
+		{
+			"root": "pagesOrder",
+			"pages": [
+				{
+					"path": "create/create",
+					"style": {
+						"navigationBarTitleText": "订单结算"
+					}
+				}
 			]
 		}
 	],
