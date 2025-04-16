@@ -1,13 +1,14 @@
 // src/pages/goods/goods.vue
 <script setup lang="ts">
 import { getGoodsAPI } from '@/services/goods'
-import type { GoodsItem } from '@/types/global'
 import type { GoodsResult } from '@/types/goods'
-import { onLoad, onUnload } from '@dcloudio/uni-app'
-import { ref } from 'vue'
+import { onLoad } from '@dcloudio/uni-app'
+import { computed, ref } from 'vue'
 import AddressPanel from './components/AddressPanel.vue'
 import ServicePanel from './components/ServicePanel.vue'
 import PageSkeleton from './components/PageSkeleton.vue'
+import type { SkuPopupInstance, SkuPopupLocaldata } from '@/types/vk-data-goods-sku-popup'
+import type { Color } from 'XrFrame/xrFrameSystem'
 
 // 获取屏幕边界到安全区域距离
 const { safeAreaInsets } = uni.getWindowInfo()
@@ -27,10 +28,35 @@ const query = defineProps<{
   id: string
 }>()
 
+const isShowSku = ref(false)
+const localdata = ref({} as SkuPopupLocaldata)
 const goodsList = ref<GoodsResult>()
 const getGoodsData = async () => {
   const res = await getGoodsAPI(query.id)
   goodsList.value = res.result
+  //sku数据组装
+  localdata.value = {
+    _id: res.result.id,
+    name: res.result.name,
+    goods_thumb: res.result.mainPictures[0],
+    spec_list: res.result.specs.map((v) => {
+      return {
+        name: v.name,
+        list: v.values,
+      }
+    }),
+    sku_list: res.result.skus.map((v) => {
+      return {
+        _id: v.id,
+        goods_id: res.result.id,
+        goods_name: res.result.name,
+        image: v.picture,
+        price: v.price * 100,
+        sku_name_arr: v.specs.map((vv) => vv.valueName),
+        stock: v.inventory,
+      }
+    }),
+  }
 }
 
 const previewImage = (url: string) => {
@@ -53,9 +79,44 @@ const openPopup = (name: typeof popupName.value) => {
   //打开弹出层
   popup.value?.open()
 }
+
+//按钮模式
+enum SkuMode {
+  Both = 1,
+  Cart = 2,
+  Buy = 3,
+}
+const mode = ref<SkuMode>(SkuMode.Both)
+
+const openSkuPopup = (val: SkuMode) => {
+  //打开sku弹出层
+  isShowSku.value = true
+  //设置按钮模式
+  mode.value = val
+}
+
+const skupopupRef = ref<SkuPopupInstance>()
+
+const selectArrText = computed(() => {
+  return skupopupRef.value.selectArr.join(' ').trim() || '请选择商品规格'
+})
 </script>
 
 <template>
+  <!-- SKU弹窗组件 -->
+  <vk-data-goods-sku-popup
+    v-model="isShowSku"
+    :localdata="localdata"
+    :mode="mode"
+    add-cart-background-color="#FFA868"
+    buy-now-background-color="#27BA9B"
+    ref="skupopupRef"
+    :actived-stype="{
+      Color: '#27BA9B',
+      borderColor: '#27BA9B',
+      backgroundColor: '#E9F8F5',
+    }"
+  />
   <template v-if="isFinish">
     <scroll-view scroll-y class="viewport">
       <!-- 基本信息 -->
@@ -86,9 +147,9 @@ const openPopup = (name: typeof popupName.value) => {
 
         <!-- 操作面板 -->
         <view class="action">
-          <view class="item arrow">
+          <view class="item arrow" @tap="openSkuPopup(SkuMode.Both)">
             <text class="label">选择</text>
-            <text class="text ellipsis"> 请选择商品规格 </text>
+            <text class="text ellipsis"> {{ selectArrText }} </text>
           </view>
           <view @tap="openPopup('address')" class="item arrow">
             <text class="label">送至</text>
@@ -170,8 +231,8 @@ const openPopup = (name: typeof popupName.value) => {
         </navigator>
       </view>
       <view class="buttons">
-        <view class="addcart"> 加入购物车 </view>
-        <view class="buynow"> 立即购买 </view>
+        <view @tap="openSkuPopup(SkuMode.Cart)" class="addcart"> 加入购物车 </view>
+        <view @tap="openSkuPopup(SkuMode.Buy)" class="buynow"> 立即购买 </view>
       </view>
     </view>
     <!-- uni-ui弹出层 -->
