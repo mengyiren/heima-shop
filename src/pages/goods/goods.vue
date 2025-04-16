@@ -7,8 +7,12 @@ import { computed, ref } from 'vue'
 import AddressPanel from './components/AddressPanel.vue'
 import ServicePanel from './components/ServicePanel.vue'
 import PageSkeleton from './components/PageSkeleton.vue'
-import type { SkuPopupInstance, SkuPopupLocaldata } from '@/types/vk-data-goods-sku-popup'
-import type { Color } from 'XrFrame/xrFrameSystem'
+import type {
+  SkuPopupEvent,
+  SkuPopupInstance,
+  SkuPopupLocaldata,
+} from '@/types/vk-data-goods-sku-popup'
+import { postMemberCartAPI } from '@/services/cart'
 
 // 获取屏幕边界到安全区域距离
 const { safeAreaInsets } = uni.getWindowInfo()
@@ -79,7 +83,6 @@ const openPopup = (name: typeof popupName.value) => {
   //打开弹出层
   popup.value?.open()
 }
-
 //按钮模式
 enum SkuMode {
   Both = 1,
@@ -100,6 +103,18 @@ const skupopupRef = ref<SkuPopupInstance>()
 const selectArrText = computed(() => {
   return skupopupRef.value.selectArr.join(' ').trim() || '请选择商品规格'
 })
+
+const onAddCart = async (ev: SkuPopupEvent) => {
+  await postMemberCartAPI({
+    skuId: ev._id,
+    count: ev.buy_num,
+  })
+  uni.showToast({
+    title: '加入购物车成功',
+    icon: 'success',
+  })
+  isShowSku.value = false
+}
 </script>
 
 <template>
@@ -116,6 +131,7 @@ const selectArrText = computed(() => {
       borderColor: '#27BA9B',
       backgroundColor: '#E9F8F5',
     }"
+    @add-cart="onAddCart"
   />
   <template v-if="isFinish">
     <scroll-view scroll-y class="viewport">
