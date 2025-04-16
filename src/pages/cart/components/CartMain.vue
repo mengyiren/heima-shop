@@ -12,6 +12,8 @@ import type { InputNumberBoxEvent } from '@/types/vk-data-goods-sku-popup'
 import { onShow } from '@dcloudio/uni-app'
 import { computed, ref } from 'vue'
 
+// 获取屏幕边界到安全区域距离
+const { safeAreaInsets } = uni.getWindowInfo()
 //
 const memberStore = useMemberStore()
 
@@ -149,7 +151,7 @@ const onPayment = () => {
         </navigator>
       </view>
       <!-- 吸底工具栏 -->
-      <view class="toolbar">
+      <view class="toolbar" :style="{ paddingBottom: safeAreaInsets?.bottom + 'px' }">
         <text class="all" @tap="onChangeSelectedAll" :class="{ checked: isSelectedAll }">全选</text>
         <text class="text">合计:</text>
         <text class="amount">{{ selectedCartTotalPrice }}</text>
