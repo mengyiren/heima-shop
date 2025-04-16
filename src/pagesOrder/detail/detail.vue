@@ -1,9 +1,10 @@
 <script setup lang="ts">
 import { useGuessList } from '@/composables'
-import { ref } from 'vue'
+import { onLoad, onReady } from '@dcloudio/uni-app'
+import { onMounted, ref } from 'vue'
 
 // 获取屏幕边界到安全区域距离
-const { safeAreaInsets } = uni.getSystemInfoSync()
+const { safeAreaInsets } = uni.getWindowInfo()
 // 猜你喜欢
 const { guessRef, onScrolltolower } = useGuessList()
 // 弹出层组件
@@ -28,13 +29,53 @@ const onCopy = (id: string) => {
 const query = defineProps<{
   id: string
 }>()
+
+const pages = getCurrentPages()
+
+// 基于小程序的 Page 实例类型扩展 uni-app 的 Page
+type PageInstance = Page.PageInstance & WechatMiniprogram.Page.InstanceMethods<any>
+const pageInstance = pages.at(-1) as PageInstance
+
+//页面加载完毕显示动画
+onReady(() => {
+  // 动画效果,导航栏背景色
+  pageInstance.animate(
+    '.navbar', // 选择器
+    [{ backgroundColor: 'transparent' }, { backgroundColor: '#f8f8f8' }], // 关键帧信息
+    1000, // 动画持续时长
+    {
+      scrollSource: '#scroller', // scroll-view 的选择器
+      startScrollOffset: 0, // 开始滚动偏移量
+      endScrollOffset: 50, // 停止滚动偏移量
+      timeRange: 1000, // 时间长度
+    },
+  )
+  // 动画效果,导航栏标题
+  pageInstance.animate('.navbar .title', [{ color: 'transparent' }, { color: '#000' }], 1000, {
+    scrollSource: '#scroller',
+    timeRange: 1000,
+    startScrollOffset: 0,
+    endScrollOffset: 50,
+  })
+  // 动画效果,导航栏返回按钮
+  pageInstance.animate('.navbar .back', [{ color: '#fff' }, { color: '#000' }], 1000, {
+    scrollSource: '#scroller',
+    timeRange: 1000,
+    startScrollOffset: 0,
+    endScrollOffset: 50,
+  })
+})
 </script>
 
 <template>
   <!-- 自定义导航栏: 默认透明不可见, scroll-view 滚动到 50 时展示 -->
   <view class="navbar" :style="{ paddingTop: safeAreaInsets?.top + 'px' }">
     <view class="wrap">
-      <navigator v-if="true" open-type="navigateBack" class="back icon-left"></navigator>
+      <navigator
+        v-if="pages.length > 1"
+        open-type="navigateBack"
+        class="back icon-left"
+      ></navigator>
       <navigator v-else url="/pages/index/index" open-type="switchTab" class="back icon-home">
       </navigator>
       <view class="title">订单详情</view>
