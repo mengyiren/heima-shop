@@ -142,22 +142,28 @@
 						"navigationBarTitleText": "订单结算"
 					}
 				},
-        {
+				{
 					"path": "detail/detail",
 					"style": {
 						"navigationBarTitleText": "订单详情",
-            "navigationStyle": "custom"
+						"navigationStyle": "custom"
+					}
+				},
+        {
+					"path": "list/list",
+					"style": {
+						"navigationBarTitleText": "订单列表页"
 					}
 				}
 			]
-		}
+		},
 	],
 	//分包预下载
 	"preloadRule": {
 		"pages/my/my": {
 			"network": "all",
 			"packages": [
-				"pagesMember"
+				"pagesMember","pagesOrder"
 			]
 		}
 	}

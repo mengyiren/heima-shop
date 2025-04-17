@@ -1,10 +1,13 @@
+import type { PageParams, PageResult } from '@/types/global'
 import type {
   OrderCreateParams,
   OrderCreateResult,
+  OrderPageParams,
   OrderPreResult,
   OrderResult,
 } from '@/types/order'
 import { http } from '@/utils/http'
+import type { OrderState } from './constants'
 
 export const getMemberOrderPreAPI = () => {
   return http<OrderPreResult>({
@@ -37,5 +40,13 @@ export const getMemberOrderByIdAPI = (id: string) => {
   return http<OrderResult>({
     method: 'GET',
     url: `/member/order/${id}`,
+  })
+}
+
+export const getMemberOrderListAPI = (data: OrderPageParams) => {
+  return http<PageResult<OrderResult>>({
+    method: 'GET',
+    url: '/member/order',
+    data,
   })
 }
