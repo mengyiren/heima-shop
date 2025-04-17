@@ -50,3 +50,11 @@ export const getMemberOrderListAPI = (data: OrderPageParams) => {
     data,
   })
 }
+
+export const getPayMockAPI = (data: { orderId: string }) => {
+  return http({
+    method: 'GET',
+    url: '/pay/mock',
+    data,
+  })
+}
