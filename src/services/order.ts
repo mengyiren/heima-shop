@@ -2,6 +2,7 @@ import type { PageParams, PageResult } from '@/types/global'
 import type {
   OrderCreateParams,
   OrderCreateResult,
+  OrderLogisticResult,
   OrderPageParams,
   OrderPreResult,
   OrderResult,
@@ -56,5 +57,26 @@ export const getPayMockAPI = (data: { orderId: string }) => {
     method: 'GET',
     url: '/pay/mock',
     data,
+  })
+}
+
+export const getMemberOrderConsignmentAPI = (d: string) => {
+  return http({
+    method: 'GET',
+    url: `/member/order/consignment/${d}`,
+  })
+}
+
+export const putMemberOrderReceiptByIdAPI = (id: string) => {
+  return http<OrderResult>({
+    method: 'PUT',
+    url: `/member/order/${id}/receipt`,
+  })
+}
+
+export const getMemberOrderLogisticsByIdAPI = (id: string) => {
+  return http<OrderLogisticResult>({
+    method: 'GET',
+    url: `/member/order/${id}/logistics`,
   })
 }

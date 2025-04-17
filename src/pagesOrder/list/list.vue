@@ -86,7 +86,7 @@ onLoad(() => {
             <!-- 订单操作按钮 -->
             <view class="action">
               <!-- 待付款状态：显示去支付按钮 -->
-              <template v-if="true">
+              <template v-if="item.orderState === OrderState.DaiFuKuan">
                 <view class="button primary">去支付</view>
               </template>
               <template v-else>
