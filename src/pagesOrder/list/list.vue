@@ -17,7 +17,7 @@ const orderTabs = ref([
 ])
 
 const query = defineProps<{
-  type: number
+  type: string
 }>()
 
 const orderList = ref<OrderResult[]>([])
@@ -36,20 +36,34 @@ onLoad(() => {
   // 获取订单列表数据
   getOrderListData()
 })
+
+const activeIndex = ref(orderTabs.value.findIndex((v) => v.orderState === Number(query.type)))
 </script>
 
 <template>
   <view class="viewport">
     <!-- tabs -->
     <view class="tabs">
-      <text class="item" v-for="item in orderTabs" :key="item.orderState"> {{ item.title }} </text>
+      <text
+        class="item"
+        v-for="(item, index) in orderTabs"
+        :key="item.orderState"
+        @tap="activeIndex = index"
+      >
+        {{ item.title }}
+      </text>
       <!-- 游标 -->
-      <view class="cursor" :style="{ left: 0 * 20 + '%' }"></view>
+      <view class="cursor" :style="{ left: activeIndex * 20 + '%' }"></view>
     </view>
     <!-- 滑动容器 -->
     <swiper class="swiper">
       <!-- 滑动项 -->
-      <swiper-item v-for="item in 5" :key="item">
+      <swiper-item
+        v-for="item in orderTabs"
+        :key="item.orderState"
+        @change="activeIndex = $event.detail.current"
+        :current="activeIndex"
+      >
         <!-- 订单列表 -->
         <scroll-view scroll-y class="orders">
           <view class="card" v-for="item in orderList" :key="item.id">
@@ -98,7 +112,9 @@ onLoad(() => {
                   再次购买
                 </navigator>
                 <!-- 待收货状态: 展示确认收货 -->
-                <view v-if="false" class="button primary">确认收货</view>
+                <view v-if="item.orderState === OrderState.DaiShouHuo" class="button primary"
+                  >确认收货</view
+                >
               </template>
             </view>
           </view>
