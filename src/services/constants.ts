@@ -15,7 +15,7 @@ export enum OrderState {
 }
 
 /** 订单状态列表 */
-export const orderStateList = [
+export const OrderStateList = [
   { id: 0, text: '' },
   { id: 1, text: '待付款' },
   { id: 2, text: '待发货' },

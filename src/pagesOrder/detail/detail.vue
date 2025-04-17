@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useGuessList } from '@/composables'
-import { OrderState, orderStateList } from '@/services/constants'
+import { OrderState, OrderStateList } from '@/services/constants'
 import {
   deleteMemberOrderAPI,
   getMemberOrderByIdAPI,
@@ -182,7 +182,7 @@ const onOrderDelete = () => {
         <!-- 其他订单状态:展示再次购买按钮 -->
         <template v-else>
           <!-- 订单状态文字 -->
-          <view class="status"> {{ orderStateList[order!.orderState].text }} </view>
+          <view class="status"> {{ OrderStateList[order!.orderState].text }} </view>
           <view class="button-group">
             <navigator
               class="button"

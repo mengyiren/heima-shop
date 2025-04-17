@@ -2,6 +2,7 @@ import type { PageParams, PageResult } from '@/types/global'
 import type {
   OrderCreateParams,
   OrderCreateResult,
+  OrderListResult,
   OrderLogisticResult,
   OrderPageParams,
   OrderPreResult,
@@ -45,7 +46,7 @@ export const getMemberOrderByIdAPI = (id: string) => {
 }
 
 export const getMemberOrderListAPI = (data: OrderPageParams) => {
-  return http<PageResult<OrderResult>>({
+  return http<OrderListResult>({
     method: 'GET',
     url: '/member/order',
     data,
