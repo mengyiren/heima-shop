@@ -2,6 +2,7 @@
 import { useGuessList } from '@/composables'
 import { OrderState, orderStateList } from '@/services/constants'
 import {
+  deleteMemberOrderAPI,
   getMemberOrderByIdAPI,
   getMemberOrderConsignmentAPI,
   getMemberOrderLogisticsByIdAPI,
@@ -128,6 +129,19 @@ const onOrderConfirm = () => {
     },
   })
 }
+
+const onOrderDelete = () => {
+  uni.showModal({
+    title: '删除订单',
+    content: '是否删除订单？',
+    success: async (res) => {
+      if (res.confirm) {
+        await deleteMemberOrderAPI({ ids: [query.id] })
+        uni.redirectTo({ url: '/pagesOrder/list/list' })
+      }
+    },
+  })
+}
 </script>
 
 <template>
@@ -228,7 +242,7 @@ const onOrderConfirm = () => {
             </view>
           </navigator>
           <!-- 待评价状态:展示按钮 -->
-          <view class="action" v-if="true">
+          <view class="action" v-if="order.orderState === OrderState.DaiPingJia">
             <view class="button primary">申请售后</view>
             <navigator url="" class="button"> 去评价 </navigator>
           </view>
@@ -237,15 +251,15 @@ const onOrderConfirm = () => {
         <view class="total">
           <view class="row">
             <view class="text">商品总价: </view>
-            <view class="symbol">99.00</view>
+            <view class="symbol">{{ order.totalMoney }}</view>
           </view>
           <view class="row">
             <view class="text">运费: </view>
-            <view class="symbol">10.00</view>
+            <view class="symbol">{{ order.postFee }}</view>
           </view>
           <view class="row">
             <view class="text">应付金额: </view>
-            <view class="symbol primary">109.00</view>
+            <view class="symbol primary">{{ order.payMoney }}</view>
           </view>
         </view>
       </view>
@@ -290,9 +304,15 @@ const onOrderConfirm = () => {
             确认收货
           </view>
           <!-- 待评价状态: 展示去评价 -->
-          <view class="button"> 去评价 </view>
+          <view v-if="order.orderState === OrderState.DaiPingJia" class="button"> 去评价 </view>
           <!-- 待评价/已完成/已取消 状态: 展示删除订单 -->
-          <view class="button delete"> 删除订单 </view>
+          <view
+            v-if="order.orderState >= OrderState.DaiPingJia"
+            class="button delete"
+            @tap="onOrderDelete"
+          >
+            删除订单
+          </view>
         </template>
       </view>
     </template>
